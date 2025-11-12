@@ -3,6 +3,7 @@
     Daily data captured from Alvaria "Aspect Workforce"
 """
 import pandas as pd
+from sqlalchemy import create_engine
 
 
 def cleanday(inputfile, idp_date):
@@ -21,6 +22,19 @@ def cleanday(inputfile, idp_date):
                                     'SL-ACD', 'OAHT', 'A-AHT', 'A-ASA']]
 
     clean_idp.insert(0, 'Date', pd.to_datetime(idp_date))
-    clean_idp['Time Period'] = pd.to_datetime(clean_idp['Time Period'], format='%H:%M %p').dt.time
+    clean_idp['Date'] = pd.to_datetime(clean_idp['Date'],
+                                       format='%Y-%m-%d').dt.date
+    clean_idp['Time Period'] = pd.to_datetime(clean_idp['Time Period'],
+                                              format='%I:%M %p').dt.time
 
     return clean_idp
+
+
+def update_idpdb(daily_idp, database_file, table_name):
+    """update_idpdb(daily_idp, database_file, table_name)
+        -insert daily_idp into the sql database database_file in table_name
+        -db_file is str in 'sqlite:///name.db'
+    """
+    db_engine = create_engine(database_file)
+    daily_idp.to_sql(
+            table_name, con=db_engine, if_exists='replace', index=False)
