@@ -8,7 +8,8 @@ import pandas as pd
 def cleanday(inputfile, idp_date):
     """cleanday(inputfile, idp_date)
         - clean-up raw csv data for a single day from inputfile
-        - add idp_date (TODO: enforce datetime data type?)
+        - add idp_date (type str formatted 'YYYY-MM-DD')
+        - convert 'Time Period' to datetime values
         - returns the cleaned data as a pandas object
     """
     daily_idp = pd.read_csv(inputfile)
@@ -19,6 +20,7 @@ def cleanday(inputfile, idp_date):
                                     'HC Required for SL', 'NET Butts in Seats',
                                     'SL-ACD', 'OAHT', 'A-AHT', 'A-ASA']]
 
-    clean_idp.insert(0, 'Date', idp_date)  # Add the date as first column
+    clean_idp.insert(0, 'Date', pd.to_datetime(idp_date))
+    clean_idp['Time Period'] = pd.to_datetime(clean_idp['Time Period'], format='%H:%M %p').dt.time
 
     return clean_idp
