@@ -60,6 +60,16 @@ def cleanIDP(inputfile, idp_date):
 def cleanSEG(infile):
     """cleanSEG
         -cleans segment data for off phone activity reporting
-        -returns clean pandas object with necessary data
+        -splits the first column into two individual columns
+        -returns clean pandas object with all necessary data
     """
-    pass
+    seg_data = pd.read_csv(infile, usecols=[4, 5, 11, 13, 15, 16, 17])
+    split_col = seg_data.iloc[:, 0].str.split('  ')
+    ids = pd.Series([col[2].strip('()') for col in split_col])
+    names = pd.Series([col[1] for col in split_col])
+    cleaned = pd.DataFrame(ids)
+    cleaned = pd.concat([cleaned, names, seg_data.iloc[:, 2:]], axis=1)
+    cleaned.columns = ['ID', 'AGENT', 'DATE', 'START',
+                       'STOP', 'DURATION', 'COMMENT']
+
+    return cleaned
