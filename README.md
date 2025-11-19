@@ -1,2 +1,2 @@
 # workIDP
-Routines to help track IDP data and aid data exploration
+Routines to help clean, analyze, and track data for my workforce duties.
