@@ -63,13 +63,13 @@ def cleanSEG(infile):
         -splits the first column into two individual columns
         -returns clean pandas object with all necessary data
     """
-    seg_data = pd.read_csv(infile, usecols=[4, 5, 11, 13, 15, 16, 17])
+    seg_data = pd.read_csv(infile, usecols=[4, 5, 11, 13, 15, 16, 17], header=None)
     split_col = seg_data.iloc[:, 0].str.split('  ')
     ids = pd.Series([col[2].strip('()') for col in split_col])
     names = pd.Series([col[1] for col in split_col])
-    cleaned = pd.DataFrame(ids)
-    cleaned = pd.concat([cleaned, names, seg_data.iloc[:, 2:]], axis=1)
-    cleaned.columns = ['ID', 'AGENT', 'DATE', 'START',
+    segments = pd.Series([col[1] for col in seg_data.iloc[:, 1].str.split('  ')])
+    cleaned = pd.concat([ids, names, segments, seg_data.iloc[:, 2:]], axis=1)
+    cleaned.columns = ['ID', 'AGENT', 'SEGMENT', 'DATE', 'START',
                        'STOP', 'DURATION', 'COMMENT']
 
     return cleaned
